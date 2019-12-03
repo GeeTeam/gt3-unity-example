@@ -12,16 +12,13 @@ public class GT3iOSUnityHandler : MonoBehaviour
     [DllImport("__Internal")]
     private static extern void __iOSStartCaptcha(string callBackObjectName, string rejectCallBackName, string resolveCallBackName);
     [DllImport("__Internal")]
-    private static extern void __iOSGtViewWithTimeout(double timeout);
+    private static extern void __iOSSetGTViewWithTimeout(double timeout);
     [DllImport("__Internal")]
     private static extern void __iOSDisableBackgroundUserInteraction(bool disable);
     [DllImport("__Internal")]
     private static extern void __iOSEnableDebug(bool enable);
     [DllImport("__Internal")]
-    private static extern void __iOSUserCloseCaptchaView();
-
-    [DllImport("__Internal")]
-    private static extern void __iOSMyLog(string str);
+    private static extern void __iOSCloseCaptchaView();
 
     // Start is called before the first frame update
     void Start()
