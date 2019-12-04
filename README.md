@@ -59,8 +59,8 @@
 
 1. 集成极验 Android SDK 需要把 `Assets/Plugins/Android/` 下的 SDK 相关的文件 `geetest_sensebot_android_v4.1.7_20191115.aar`，SDK 相关的依赖文件 `okhttp-3.11.0.jar`、`okio-1.17.3.jar`、`tbs_sdk_thirdapp_v4.3.0.1072_43646_sharewithdownloadwithfile_withoutGame_obfs_20190429_175122.jar`，SDK 调用相关的桥文件 `geetest_unity-release.aar`，C# 调用文件 `GT3AndroidUnityHandler.cs` 导入到工程中的 **Assets** 目录下。
 2. 参考 `GT3AndroidUnityHandler.cs`  关联 Unity 组件对象的事件，调用验证码模块。
-3. 打开 `File - Build Settings`，并选择 iOS 平台。
-4. 选择左下角的 `Player Settings - Other Settings`，确认 Xcode 工程相关的信息。真机使用 Device SDK，模拟器使用 Simulator SDK。
+3. 打开 `File - Build Settings`，并选择 Android 平台。
+4. 选择左下角的 `Player Settings - Other Settings`，确认 Android 工程相关的信息。
 5. 选择 Build Settings 右下角的 Build 或 Build And Run，首次需要指定输出路径及文件夹名称。
 
 ### 自定义封装说明
