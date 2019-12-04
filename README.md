@@ -1,30 +1,59 @@
-# gt3-unity-example 
+# gt3-unity-example
 
-## Android端使用说明
+## 文件目录
 
-### 1、asset/plugins/android文件内容说明：
+```
+.
+├── Assembly-CSharp-firstpass.csproj
+├── Assembly-CSharp.csproj
+├── Assets
+│   ├── Plugins
+│   │   ├── Android
+│   │   │   ├── AndroidManifest.xml // Android 清单文件
+│   │   │   ├── GT3AndroidUnityHandler.cs // Unity Android 调用 script
+│   │   │   ├── geetest_sensebot_android_v4.1.7_20191115.aar // 极验 Android SDK
+│   │   │   ├── geetest_unity-release.aar // 原生文件及桥接文件打包的输出文件。若有需求，可参考此文件此文件对极验 SDK 进行封装。
+│   │   │   ├── okhttp-3.11.0.jar // 极验 Android SDK 依赖，网络库
+│   │   │   ├── okio-1.17.3.jar // 极验 Android SDK 依赖，网络库
+│   │   │   └── tbs_sdk_thirdapp_v4.3.0.1072_43646_....jar // 极验sdk依赖的极验 Android SDK 依赖，webview内核库
+│   │   └── iOS
+│   │       ├── GT3Captcha.bundle // 极验 iOS SDK bundle 文件
+│   │       ├── GT3Captcha.framework // 极验 iOS SDK 文件
+│   │       ├── GT3CaptchaUnityBridge.h // 桥文件 .h
+│   │       ├── GT3CaptchaUnityBridge.m // 桥文件 .m
+│   │       └── GT3iOSUnityHandler.cs // Unity iOS 调用 script
+│   └── Scenes
+│       └── SampleScene.unity // 示例的 scene 文件
+├── Builds // 输出文件夹
+├── GT3CaptchaUnityExample.sln
+├── Library
+├── Logs
+├── Packages
+├── ProjectSettings
+├── README.md
+├── Temp
+├── UserSettings
+└── obj
+```
 
-| 文件名                                                       | 文件说明                                                     |
-| :----------------------------------------------------------- | ------------------------------------------------------------ |
-| AndroidManifest.xml                                          | android 清单文件                                        |
-| geetest\_sensebot\_android\_v4.1.7\_20191115.aar                 | 极验验证码sdk                                              |
-| geetest\_unity-release.aar                                    | 原生文件及桥接文件打包结果，封装了极验方法供c#调用。若有自定义需求，可重新封装此文件以做调用 |
-| GT3AndroidUnityHandler.cs                                    | c#集成示例文件                                               |
-| Okhttp-3.11.0.jar                                            | 极验sdk依赖的第三方网络库，需添加                            |
-| Okio-1.17.3.jar                                              | 极验sdk依赖的第三方网络库，需添加                            |
-| tbs\_sdk\_thirdapp\_v4.3.0.1072\_43646\_sharewithdownloadwithfile \_withoutGame\_obfs\_20190429\_175122.jar | 极验sdk依赖的第三方webview内核库，需添加                     |
+## Android 使用指南
 
-### 2、集成说明
+### 集成说明
 
-* 代码下拉完成后，打开build.setting，点击build and run，在APP中点击一下按钮，即可体验极验验证码。
-* 若因unity编译工具版本或其他因素无法打开本工程，可将上述文件复制，新建一个unity工程在asset/plugins/android目录下粘贴，在UI界面创建一个button，将GT3AndroidUnityHandler.cs文件拖到该button的inspector界面作为component添加，即可体验。
+1. 集成极验 Android SDK 需要把 `Assets/Plugins/Android/` 下的 SDK 相关的文件 `geetest_sensebot_android_v4.1.7_20191115.aar`，SDK 相关的依赖文件 `okhttp-3.11.0.jar`、`okio-1.17.3.jar`、`tbs_sdk_thirdapp_v4.3.0.1072_43646_sharewithdownloadwithfile_withoutGame_obfs_20190429_175122.jar`，SDK 调用相关的桥文件 `geetest_unity-release.aar`，C# 调用文件 `GT3AndroidUnityHandler.cs` 导入到工程中的 **Assets** 目录下。
+2. 参考 `GT3AndroidUnityHandler.cs`  关联 Unity 组件对象的事件，调用验证码模块。
+3. 打开 `File - Build Settings`，并选择 iOS 平台。
+4. 选择左下角的 `Player Settings - Other Settings`，确认 Xcode 工程相关的信息。真机使用 Device SDK，模拟器使用 Simulator SDK。
+5. 选择 Build Settings 右下角的 Build 或 Build And Run，首次需要指定输出路径及文件夹名称。
 
-### 3、自定义需求封装步骤
+### 自定义封装说明
 
-* 创建一个新的Android studio 工程，新建一个module，[集成极验sdk](https://docs.geetest.com/install/deploy/client/android)。
-* 必要的验证方法以及验证流程封装可参考MainActivity.java文件。 
-* 完成自定义需求后，将module打包为新的geetest_unity-release.aar文件。
-* 在unity工程中替换此文件，按需求调用，重新编译打成apk包。
+如需更一步的封装极验 Android SDK，请阅读下面的指导步骤:
+
+1. 创建一个新的 Android studio 工程，新建一个 module，[集成极验sdk](https://docs.geetest.com/install/deploy/client/android)。
+2. 必要的验证方法以及验证流程封装可参考 `MainActivity.java` 文件。 
+3. 完成自定义需求后，将 module 打包为新的 `geetest_unity-release.aar` 文件。
+4. 在 unity 工程中替换此文件，按需求调用，重新编译打成 apk 包。
 
 ```java
 public class MainActivity extends UnityPlayerActivity {
@@ -262,3 +291,20 @@ public class MainActivity extends UnityPlayerActivity {
     }
 }
 ```
+
+## iOS 使用指南
+
+### 集成说明
+
+1. 集成极验 iOS SDK 需要把 `Assets/Plugins/iOS/` 下的 SDK 相关的文件 `GT3Captcha.framework`、`GT3Captcha.bundle`，SDK 调用相关的桥文件 `GT3CaptchaUnityBridge.h`、`GT3CaptchaUnityBridge.m` ，C# 调用文件 `GT3iOSUnityHandler.cs` 导入到工程中的 **Assets** 目录下。
+2. 参考 `GT3iOSUnityHandler.cs`  关联 Unity 组件对象的事件，调用验证码模块。
+3. 打开 `File - Build Settings`，并选择 iOS 平台。
+4. 选择左下角的 `Player Settings - Other Settings`，确认 Xcode 工程相关的信息。真机使用 Device SDK，模拟器使用 Simulator SDK。
+5. 选择 Build Settings 右下角的 Build 或 Build And Run，首次需要指定输出路径及文件夹名称。
+
+### 自定义封装说明
+
+如需更一步的封装极验 iOS SDK，您可能需要仔细阅读下列资料:
+
+* 桥文件 `GT3CaptchaUnityBridge.m`、C# 调用文件 `GT3iOSUnityHandler.cs` ，以更进一步了解极验 iOS SDK 的 Unity 封装。
+* [官方部署文档](https://docs.geetest.com/install/deploy/client/ios) 和 官方 Xcode Project示例，以了解极验 iOS SDK 的原生使用方式。
