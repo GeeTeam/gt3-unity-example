@@ -1,6 +1,6 @@
 # gt3-unity-example
 
-## 文件目录
+## 工程目录说明
 
 ```
 .
@@ -35,6 +35,23 @@
 ├── UserSettings
 └── obj
 ```
+
+## iOS 使用指南
+
+### 集成说明
+
+1. 集成极验 iOS SDK 需要把 `Assets/Plugins/iOS/` 下的 SDK 相关的文件 `GT3Captcha.framework`、`GT3Captcha.bundle`，SDK 调用相关的桥文件 `GT3CaptchaUnityBridge.h`、`GT3CaptchaUnityBridge.m` ，C# 调用文件 `GT3iOSUnityHandler.cs` 导入到工程中的 **Assets** 目录下。
+2. 参考 `GT3iOSUnityHandler.cs`  关联 Unity 组件对象的事件，调用验证码模块。
+3. 打开 `File - Build Settings`，并选择 iOS 平台。
+4. 选择左下角的 `Player Settings - Other Settings`，确认 Xcode 工程相关的信息。真机使用 Device SDK，模拟器使用 Simulator SDK。
+5. 选择 Build Settings 右下角的 Build 或 Build And Run，首次需要指定输出路径及文件夹名称。
+
+### 自定义封装说明
+
+如需更一步的封装极验 iOS SDK，您可能需要仔细阅读下列资料:
+
+* 桥文件 `GT3CaptchaUnityBridge.m`、C# 调用文件 `GT3iOSUnityHandler.cs` ，以更进一步了解极验 iOS SDK 的 Unity 封装。
+* [极验 iOS 官方文档](https://docs.geetest.com/install/deploy/client/ios) 和 官方 Xcode Project示例，以了解极验 iOS SDK 的原生使用方式。
 
 ## Android 使用指南
 
@@ -291,20 +308,3 @@ public class MainActivity extends UnityPlayerActivity {
     }
 }
 ```
-
-## iOS 使用指南
-
-### 集成说明
-
-1. 集成极验 iOS SDK 需要把 `Assets/Plugins/iOS/` 下的 SDK 相关的文件 `GT3Captcha.framework`、`GT3Captcha.bundle`，SDK 调用相关的桥文件 `GT3CaptchaUnityBridge.h`、`GT3CaptchaUnityBridge.m` ，C# 调用文件 `GT3iOSUnityHandler.cs` 导入到工程中的 **Assets** 目录下。
-2. 参考 `GT3iOSUnityHandler.cs`  关联 Unity 组件对象的事件，调用验证码模块。
-3. 打开 `File - Build Settings`，并选择 iOS 平台。
-4. 选择左下角的 `Player Settings - Other Settings`，确认 Xcode 工程相关的信息。真机使用 Device SDK，模拟器使用 Simulator SDK。
-5. 选择 Build Settings 右下角的 Build 或 Build And Run，首次需要指定输出路径及文件夹名称。
-
-### 自定义封装说明
-
-如需更一步的封装极验 iOS SDK，您可能需要仔细阅读下列资料:
-
-* 桥文件 `GT3CaptchaUnityBridge.m`、C# 调用文件 `GT3iOSUnityHandler.cs` ，以更进一步了解极验 iOS SDK 的 Unity 封装。
-* [极验 iOS 官方文档](https://docs.geetest.com/install/deploy/client/ios) 和 官方 Xcode Project示例，以了解极验 iOS SDK 的原生使用方式。
