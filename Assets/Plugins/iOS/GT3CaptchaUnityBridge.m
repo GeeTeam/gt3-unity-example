@@ -8,12 +8,7 @@
 #import "GT3CaptchaUnityBridge.h"
 #import <GT3Captcha/GT3Captcha.h>
 
-//#warning 配置以下参数
-//#define DefaultRegisterAPI @"http://www.geetest.com/demo/gt/register-slide"
-//#define DefaultValidateAPI @"http://www.geetest.com/demo/gt/validate-slide"
-////C#中监听回调的类
-//static const char * GT3HandlerName = "GT3Handler";
-
+#define GT3UnityCodeKey @"code"
 #define GT3UnityErrorCodeKey @"error_code"
 #define GT3UnityMessageKey @"message"
 
@@ -77,19 +72,25 @@ static GT3CaptchaUnityBridge *mySDK = nil;
 
 #pragma mark -- iOS to Unity   iOS调用Unity方法
 
-+ (void)sendU3dMessage:(NSString *)messageName withParam:(NSDictionary *)dict {
-    NSString *param = @"";
-    if ( nil != dict ) {
-        for (NSString *key in dict) {
-            if ([param length] == 0) {
-                param = [param stringByAppendingFormat:@"%@=%@", key, [dict valueForKey:key]];
-            }
-            else {
-                param = [param stringByAppendingFormat:@"&%@=%@", key, [dict valueForKey:key]];
-            }
-        }
++ (void)sendU3dMessage:(NSString *)messageName withDict:(NSDictionary *)dict {
+    if (mySDK.callBackObjectName) {
+        NSData *data = [NSJSONSerialization dataWithJSONObject:dict options:(NSJSONWritingOptions)0 error:nil];
+        NSString *param = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        UnitySendMessage([mySDK.callBackObjectName UTF8String], [messageName UTF8String], [param UTF8String]);
     }
-    UnitySendMessage([mySDK.callBackObjectName UTF8String], [messageName UTF8String], [param UTF8String]);
+    else {
+        NSLog(@"GT3CaptchaUnityBridge Error: No callBackObject.");
+    }
+}
+
++ (void)sendU3dMessage:(NSString *)messageName withData:(NSData *)data {
+    if (mySDK.callBackObjectName) {
+        NSString *param = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        UnitySendMessage([mySDK.callBackObjectName UTF8String], [messageName UTF8String], [param UTF8String]);
+    }
+    else {
+        NSLog(@"GT3CaptchaUnityBridge Error: No callBackObject.");
+    }
 }
 
 #pragma mark -- GT3CaptchaManagerViewDelegate
@@ -102,24 +103,24 @@ static GT3CaptchaUnityBridge *mySDK = nil;
 // 以下两个回调是验证过程中所必须的，其他例如修改api1/api2请求，或不使用默认api1/api2请求等可选回调，依据项目业务需求实现，具体可参考极验行为验证demo
 // 收到验证结果的回调
 - (void)gtCaptcha:(GT3CaptchaManager *)manager didReceiveSecondaryCaptchaData:(NSData *)data response:(NSURLResponse *)response error:(GT3Error *)error decisionHandler:(void (^)(GT3SecondaryCaptchaPolicy))decisionHandler {
-    NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     if (!error) {
         //二次验证通过
-        NSString *dataStr = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
         decisionHandler(GT3SecondaryCaptchaPolicyAllow);
         
-        if (self.rejectCallBackName && dataStr) {
-            UnitySendMessage([mySDK.callBackObjectName UTF8String], [self.rejectCallBackName UTF8String], [dataStr UTF8String]);
+        if (self.resolveCallBackName) {
+            [GT3CaptchaUnityBridge sendU3dMessage:self.resolveCallBackName withData:data];
         }
     }
     else {
         //二次验证发生错误
         decisionHandler(GT3SecondaryCaptchaPolicyForbidden);
-        [dic setValue:error.error_code forKey:@"error_code"];
-        [dic setValue:error.gtDescription forKey:@"gtDescription"];
+        [dict setValue:@(error.code) forKey:GT3UnityCodeKey];
+        [dict setValue:error.error_code forKey:GT3UnityErrorCodeKey];
+        [dict setValue:error.gtDescription forKey:GT3UnityMessageKey];
         
-        if (self.resolveCallBackName) {
-            [GT3CaptchaUnityBridge sendU3dMessage:self.resolveCallBackName withParam:dic];
+        if (self.rejectCallBackName) {
+            [GT3CaptchaUnityBridge sendU3dMessage:self.rejectCallBackName withDict:dict];
         }
     }
 }
@@ -141,11 +142,12 @@ static GT3CaptchaUnityBridge *mySDK = nil;
     }
     
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    [dict setValue:@(error.code) forKey:GT3UnityCodeKey];
     [dict setValue:error.error_code     forKey:GT3UnityErrorCodeKey];
     [dict setValue:error.gtDescription  forKey:GT3UnityMessageKey];
     
     if (self.rejectCallBackName) {
-        [GT3CaptchaUnityBridge sendU3dMessage:self.rejectCallBackName withParam:dict];
+        [GT3CaptchaUnityBridge sendU3dMessage:self.rejectCallBackName withDict:dict];
     }
 }
 

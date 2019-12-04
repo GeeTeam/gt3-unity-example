@@ -32,7 +32,7 @@ public class GT3iOSUnityHandler : MonoBehaviour
 
     }
 
-    public void click()
+    public void click() // 提供给 unity 对象触发验证的方法
     {
         //参数一：回调监听的对象
         //参数二：gt3产生错误的回调方法名
@@ -40,18 +40,21 @@ public class GT3iOSUnityHandler : MonoBehaviour
         __iOSStartCaptcha("GT3Handler", "gt3ErrorHandler", "gt3SuccessHandler");
     }
 
-    //回调函数
+    // 处理错误的回调函数
     void gt3ErrorHandler(string str)
     {
         // TO-DO: 错误处理
+        // str 的格式为 {"code": -1001, "error_code":"-100103","message":""}
         print("\nError: \n");
         print(str);
         print("\n");
     }
 
+    // 处理成功数据的回调函数
     void gt3SuccessHandler(string str)
     {
         // TO-DO: 成功处理
+        // str 为 api2 返回的数据
         print("\nSuccess: \n");
         print(str);
         print("\n");
