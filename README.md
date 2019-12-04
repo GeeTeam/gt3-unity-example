@@ -17,7 +17,7 @@
 ### 2、集成说明
 
 * 代码下拉完成后，打开build.setting，点击build and run，在APP中点击一下按钮，即可体验极验验证码。
-* 若因unity编译工具版本或其他因素无法打开本工程，可将上述文件复制，新建一个unity工程在asset/plugins/android目录下粘贴，在UI界面创建一个button，将GT3AndroidUnityHandler.cs文件赋给该button
+* 若因unity编译工具版本或其他因素无法打开本工程，可将上述文件复制，新建一个unity工程在asset/plugins/android目录下粘贴，在UI界面创建一个button，将GT3AndroidUnityHandler.cs文件拖到该button的inspector界面作为component添加，即可体验。
 
 ### 3、自定义需求封装步骤
 
