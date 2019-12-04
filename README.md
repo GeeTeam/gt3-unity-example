@@ -50,7 +50,7 @@
 
 如需更一步的封装极验 Android SDK，请阅读下面的指导步骤:
 
-1. 创建一个新的 Android studio 工程，新建一个 module，[集成极验sdk](https://docs.geetest.com/install/deploy/client/android)。
+1. 创建一个新的 Android studio 工程，新建一个 module，[极验 Android 官方文档](https://docs.geetest.com/install/deploy/client/android)。
 2. 必要的验证方法以及验证流程封装可参考 `MainActivity.java` 文件。 
 3. 完成自定义需求后，将 module 打包为新的 `geetest_unity-release.aar` 文件。
 4. 在 unity 工程中替换此文件，按需求调用，重新编译打成 apk 包。
@@ -307,4 +307,4 @@ public class MainActivity extends UnityPlayerActivity {
 如需更一步的封装极验 iOS SDK，您可能需要仔细阅读下列资料:
 
 * 桥文件 `GT3CaptchaUnityBridge.m`、C# 调用文件 `GT3iOSUnityHandler.cs` ，以更进一步了解极验 iOS SDK 的 Unity 封装。
-* [官方部署文档](https://docs.geetest.com/install/deploy/client/ios) 和 官方 Xcode Project示例，以了解极验 iOS SDK 的原生使用方式。
+* [极验 iOS 官方文档](https://docs.geetest.com/install/deploy/client/ios) 和 官方 Xcode Project示例，以了解极验 iOS SDK 的原生使用方式。
