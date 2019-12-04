@@ -64,7 +64,7 @@
 2. 参考 `GT3AndroidUnityHandler.cs` 和 `SampleSceneAndroid.unity` 关联 Unity 组件对象的事件，调用验证码模块。
 3. 打开 `File - Build Settings`，并在平台中选择 Android，场景中勾选 Android 相应的场景。
 4. 选择左下角的 `Player Settings - Other Settings`，确认 Android 工程相关的信息。
-5. 选择 Build Settings 右下角的 Build 或 Build And Run，首次需要指定输出路径及文件夹名称。
+5. 选择 Build Settings 右下角的 Build 或 Build And Run，首次需要指定输出路径及文件夹名称，运行结果将以apk包形式安装到手机。
 
 ### 自定义封装说明
 
