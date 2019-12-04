@@ -6,13 +6,13 @@
 
 | 文件名                                                       | 文件说明                                                     |
 | :----------------------------------------------------------- | ------------------------------------------------------------ |
-| AndroidManifest.xml                                          | android 清单文件。                                           |
-| geetest_sensebot_android_v4.1.7_20191115.aar                 | 极验验证码sdk。                                              |
-| geetest_unity-release.aar                                    | 原生文件及桥接文件打包结果，封装了极验方法供c#调用。若有自定义需求，可重新封装此文件以做调用。 |
+| AndroidManifest.xml                                          | android 清单文件                                        |
+| geetest\_sensebot\_android\_v4.1.7\_20191115.aar                 | 极验验证码sdk                                              |
+| geetest\_unity-release.aar                                    | 原生文件及桥接文件打包结果，封装了极验方法供c#调用。若有自定义需求，可重新封装此文件以做调用 |
 | GT3AndroidUnityHandler.cs                                    | c#集成示例文件                                               |
 | Okhttp-3.11.0.jar                                            | 极验sdk依赖的第三方网络库，需添加                            |
 | Okio-1.17.3.jar                                              | 极验sdk依赖的第三方网络库，需添加                            |
-| tbs_sdk_thirdapp_v4.3.0.1072_43646_sharewithdownloadwithfile _withoutGame_obfs_20190429_175122.jar | 极验sdk依赖的第三方webview内核库，需添加                     |
+| tbs\_sdk\_thirdapp\_v4.3.0.1072\_43646\_sharewithdownloadwithfile \_withoutGame\_obfs\_20190429\_175122.jar | 极验sdk依赖的第三方webview内核库，需添加                     |
 
 ### 2、集成说明
 
