@@ -46,6 +46,8 @@
 3. 打开 `File - Build Settings`，并在平台中选择 iOS，场景中勾选 iOS 相应的场景。
 4. 选择左下角的 `Player Settings - Other Settings`，确认 Xcode 工程相关的信息。真机使用 Device SDK，模拟器使用 Simulator SDK。
 5. 选择 Build Settings 右下角的 Build 或 Build And Run，首次需要指定输出路径及文件夹名称。
+6. 构建新的 Xcode 工程后，需要在项目的 **TARGETS - UnityFramework - Build Settings - Other Linker Flags** 中添加 `-ObjC`,  并在 **TARGETS - Unity-iPhone - Copy Bundle Resources** 添加 `GT3Captcha.bundle`。
+7. 运行 Xcode 工程。
 
 ### 自定义封装说明
 
@@ -60,7 +62,7 @@
 
 1. 集成极验 Android SDK 需要把 `Assets/Plugins/Android/` 下的 SDK 相关的文件 `geetest_sensebot_android_v4.1.7_20191115.aar`，SDK 相关的依赖文件 `okhttp-3.11.0.jar`、`okio-1.17.3.jar`、`tbs_sdk_thirdapp_v4.3.0.1072_43646_sharewithdownloadwithfile_withoutGame_obfs_20190429_175122.jar`，SDK 调用相关的桥文件 `geetest_unity-release.aar`，C# 调用文件 `GT3AndroidUnityHandler.cs` 导入到工程中的 **Assets** 目录下。
 2. 参考 `GT3AndroidUnityHandler.cs` 和 `SampleSceneAndroid.unity` 关联 Unity 组件对象的事件，调用验证码模块。
-3. 打开 `File - Build Settings`，并在平台中选择 Android，场景中勾选 Android 相应的场景。。
+3. 打开 `File - Build Settings`，并在平台中选择 Android，场景中勾选 Android 相应的场景。
 4. 选择左下角的 `Player Settings - Other Settings`，确认 Android 工程相关的信息。
 5. 选择 Build Settings 右下角的 Build 或 Build And Run，首次需要指定输出路径及文件夹名称。
 
