@@ -37,6 +37,17 @@
 └── obj
 ```
 
+<br><font color="#ff0000">
+注意：</br>
+
+若您需要使用最新版本的原生 SDK，请到 [极验官网](https://docs.geetest.com/sensebot/start/) 进行下载，下载完成之后: </br>
+
+- iOS，直接将下载附件中 `SDK` 目录下的 `GT3Captcha.framework`、`GT3Captcha.bundle` 拷贝至 Unity 工程的 `Assets/Plugins/iOS` 目录下替换原来的 `GT3Captcha.framework`、`GT3Captcha.bundle` 
+
+- Android，可先将 Unity 工程中 `/Assets/Plugins/Android/libs` 目录下的以 `geetest_sensebot_android_v` 为前缀的 aar 文件删掉，然后将下载附件中 `SDK` 目录下的 aar 文件拷贝至 Unity 工程中 `/Assets/Plugins/Android/libs` 目录
+
+</font>
+
 ## iOS 使用指南
 
 ### 集成说明
