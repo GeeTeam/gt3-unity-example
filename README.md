@@ -9,13 +9,15 @@
 ├── Assets
 │   ├── Plugins
 │   │   ├── Android
+│   │   │   ├── libs
+│   │   │   │   ├── geetest_sensebot_android_v4.2.3_20191115.aar // 极验 Android SDK
+│   │   │   │   ├── gt3_unity_android_v4.2.3_20200807.aar // 原生文件及桥接文件打包的输出文件。若有需求，可参考此文件此文件对极验 SDK 进行封装。
+│   │   │   │   ├── okhttp-3.11.0.jar // 极验 Android SDK 依赖，网络库
+│   │   │   │   ├── okio-1.17.3.jar   // 极验 Android SDK 依赖，网络库
+│   │   │   │   └── tbs_sdk_thirdapp_v4.3.0.1072_43646_....jar // 极验sdk依赖的极验 Android SDK 依赖，webview内核库
 │   │   │   ├── AndroidManifest.xml // Android 清单文件
 │   │   │   ├── GT3AndroidUnityHandler.cs // Unity Android 调用 script
-│   │   │   ├── geetest_sensebot_android_v4.1.7_20191115.aar // 极验 Android SDK
-│   │   │   ├── geetest_unity-release.aar // 原生文件及桥接文件打包的输出文件。若有需求，可参考此文件此文件对极验 SDK 进行封装。
-│   │   │   ├── okhttp-3.11.0.jar // 极验 Android SDK 依赖，网络库
-│   │   │   ├── okio-1.17.3.jar // 极验 Android SDK 依赖，网络库
-│   │   │   └── tbs_sdk_thirdapp_v4.3.0.1072_43646_....jar // 极验sdk依赖的极验 Android SDK 依赖，webview内核库
+│   │   │   └── debug.keystore // 调试用签名文件
 │   │   └── iOS
 │   │       ├── GT3Captcha.bundle // 极验 iOS SDK bundle 文件
 │   │       ├── GT3Captcha.framework // 极验 iOS SDK 文件
@@ -71,7 +73,7 @@
 
 ### 集成说明
 
-1. 集成极验 Android SDK 需要把 `Assets/Plugins/Android/` 下的 SDK 相关的文件 `geetest_sensebot_android_v4.1.7_20191115.aar`，SDK 相关的依赖文件 `okhttp-3.11.0.jar`、`okio-1.17.3.jar`、`tbs_sdk_thirdapp_v4.3.0.1072_43646_sharewithdownloadwithfile_withoutGame_obfs_20190429_175122.jar`，SDK 调用相关的桥文件 `geetest_unity-release.aar`，C# 调用文件 `GT3AndroidUnityHandler.cs` 导入到工程中的 **Assets** 目录下。
+1. 集成极验 Android SDK 需要把 `Assets/Plugins/Android/` 下的 SDK 相关的文件 `geetest_sensebot_android_v4.1.7_20191115.aar`，SDK 相关的依赖文件 `okhttp-3.11.0.jar`、`okio-1.17.3.jar`、`tbs_sdk_thirdapp_v4.3.0.1072_43646_sharewithdownloadwithfile_withoutGame_obfs_20190429_175122.jar`，SDK 调用相关的桥文件 `gt3_unity_android_v4.2.3_20200807.aar`，C# 调用文件 `GT3AndroidUnityHandler.cs` 导入到工程中的 **Assets** 目录下。
 2. 参考 `GT3AndroidUnityHandler.cs` 和 `SampleSceneAndroid.unity` 关联 Unity 组件对象的事件，调用验证码模块。
 3. 打开 `File - Build Settings`，并在平台中选择 Android，场景中勾选 Android 相应的场景。
 4. 选择左下角的 `Player Settings - Other Settings`，确认 Android 工程相关的信息。
@@ -82,74 +84,98 @@
 如需更一步的封装极验 Android SDK，请阅读下面的指导步骤:
 
 1. 创建一个新的 Android studio 工程，新建一个 module，[极验 Android 官方文档](https://docs.geetest.com/install/deploy/client/android)。
-2. 必要的验证方法以及验证流程封装可参考 `MainActivity.java` 文件。 
-3. 完成自定义需求后，将 module 打包为新的 `geetest_unity-release.aar` 文件。
+2. 必要的验证方法以及验证流程封装可参考 `Gt3Manager.java` 文件。
+3. 完成自定义需求后，将 module 打包为新的 `gt3_unity_android_vx.x.x_xxxxxxxx.aar` 文件。
 4. 在 unity 工程中替换此文件，按需求调用，重新编译打成 apk 包。
 
 ```java
-public class MainActivity extends UnityPlayerActivity {
-
-    private int webviewTimeout;
-    private boolean outside;
-
-    private static final String TAG = MainActivity.class.getSimpleName();
+public class Gt3Manager {
+    private static final String TAG = Gt3Manager.class.getSimpleName();
+    /**
+     * 当前对象
+     */
+    private volatile static Gt3Manager gt3Manager;
 
     // api1，需替换成自己的服务器URL
-    private static String captchaURL ;
+    private String captchaURL;
     // api2，需替换成自己的服务器URL
-    private static String validateURL ;
-
-    private GT3GeetestUtils gt3GeetestUtils;
+    private String validateURL;
     private GT3ConfigBean gt3ConfigBean;
+    private GT3GeetestUtils gt3GeetestUtils;
+    private boolean outside;
+    private int webviewTimeout;
 
-    public void initWithAPI(String api1, String api2){
-        captchaURL = api1;
-        validateURL = api2;
-        gt3GeetestUtils = new GT3GeetestUtils(this);
+    /**
+     * 空构造方法
+     */
+    private Gt3Manager() {
     }
 
-    public void startGTCapcha(final PluginCallback callback){
-        UnityPlayer.currentActivity.runOnUiThread(new Runnable()
-        {
-            public void run()
-            {
-               verify(callback);
+    /**
+     * 初始化
+     *
+     * @return <>当前的对象</>
+     */
+    public static Gt3Manager with() {
+        if (gt3Manager == null) {
+            synchronized (Gt3Manager.class) {
+                if (gt3Manager == null) {
+                    gt3Manager = new Gt3Manager();
+                }
+            }
+        }
+        return gt3Manager;
+    }
+
+    public void log(String msg) {
+        Log.d(TAG, "[Unity]" + msg);
+    }
+
+    public void toast(String msg) {
+        toast(msg, true);
+    }
+
+    public void toast(String msg, final boolean longToast) {
+        final String toastMsg = TextUtils.isEmpty(msg) ? "$null" : msg;
+        UnityPlayer.currentActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(UnityPlayer.currentActivity.getApplicationContext(), toastMsg, longToast ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    public void useGTViewWithTimeout(int timeout){
+    /* JADX WARNING: type inference failed for: r1v0, types: [android.content.Context, com.geetest.geetest_unity.MainActivity] */
+    public void initWithAPI(String api1, String api2) {
+        captchaURL = api1;
+        validateURL = api2;
+        this.gt3GeetestUtils = new GT3GeetestUtils(UnityPlayer.currentActivity);
+    }
+
+    public void startGTCapcha(final PluginCallback callback) {
+        UnityPlayer.currentActivity.runOnUiThread(new Runnable() {
+            public void run() {
+                verify(callback);
+            }
+        });
+    }
+
+    public void useGTViewWithTimeout(int timeout) {
         this.webviewTimeout = timeout;
     }
 
-    public void disableBackgroundUserInteraction(boolean disableOutside){
+    public void disableBackgroundUserInteraction(boolean disableOutside) {
         this.outside = disableOutside;
     }
 
     public void verify(final PluginCallback callback) {
-        // 配置bean文件，也可在oncreate初始化
-        gt3ConfigBean = new GT3ConfigBean();
-        // 设置验证模式，1：bind，2：unbind
-        gt3ConfigBean.setPattern(1);
-        // 设置点击灰色区域是否消失，默认不消息
-        gt3ConfigBean.setCanceledOnTouchOutside(outside);
-        // 设置语言，如果为null则使用系统默认语言
-        gt3ConfigBean.setLang(null);
-        // 设置webview加载超时
-        gt3ConfigBean.setTimeout(webviewTimeout);
-        // 设置webview请求超时
-        gt3ConfigBean.setWebviewTimeout(10000);
-        // 设置回调监听
-        gt3ConfigBean.setListener(new GT3Listener() {
-
-            /**
-             * api1结果回调
-             * @param result
-             */
-            @Override
-            public void onApi1Result(String result) {
-                Log.e(TAG, "GT3BaseListener-->onApi1Result-->" + result);
-            }
+        this.gt3ConfigBean = new GT3ConfigBean();
+        this.gt3ConfigBean.setPattern(1);
+        this.gt3ConfigBean.setCanceledOnTouchOutside(this.outside);
+        this.gt3ConfigBean.setLang((String) null);
+        this.gt3ConfigBean.setTimeout(this.webviewTimeout);
+        this.gt3ConfigBean.setWebviewTimeout(10000);
+        this.gt3ConfigBean.setListener(new GT3Listener() {
 
             /**
              * 验证码加载完成
@@ -161,23 +187,22 @@ public class MainActivity extends UnityPlayerActivity {
             }
 
             /**
-             * 验证结果
-             * @param result
+             * 图形验证结果回调
+             * @param code 1为正常 0为失败
+             */
+            @Override
+            public void onReceiveCaptchaCode(int code) {
+                Log.e(TAG, "GT3BaseListener-->onReceiveCaptchaCode-->" + code);
+            }
+
+            /**
+             * 自定义api2回调
+             * @param result，api2请求上传参数
              */
             @Override
             public void onDialogResult(String result) {
                 Log.e(TAG, "GT3BaseListener-->onDialogResult-->" + result);
-                // 开启自定义api2逻辑
-                new MainActivity.RequestAPI2().execute(result);
-            }
-
-            /**
-             * api2回调
-             * @param result
-             */
-            @Override
-            public void onApi2Result(String result) {
-                Log.e(TAG, "GT3BaseListener-->onApi2Result-->" + result);
+                new RequestAPI2().execute(new String[]{result});
             }
 
             /**
@@ -205,7 +230,7 @@ public class MainActivity extends UnityPlayerActivity {
             @Override
             public void onSuccess(String result) {
                 Log.e(TAG, "GT3BaseListener-->onSuccess-->" + result);
-                callback.gt3SuccessHandler("success");
+                callback.gt3SuccessHandler(result);
             }
 
             /**
@@ -223,12 +248,11 @@ public class MainActivity extends UnityPlayerActivity {
              */
             @Override
             public void onButtonClick() {
-                new MainActivity.RequestAPI1().execute();
+                new RequestAPI1().execute();
             }
         });
-        gt3GeetestUtils.init(gt3ConfigBean);
-        // 开启自定义验证
-        gt3GeetestUtils.startCustomFlow();
+        this.gt3GeetestUtils.init(this.gt3ConfigBean);
+        this.gt3GeetestUtils.startCustomFlow();
     }
 
     /**
@@ -306,17 +330,7 @@ public class MainActivity extends UnityPlayerActivity {
         gt3GeetestUtils.destory();
     }
 
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        // TODO 销毁资源，务必添加
-        gt3GeetestUtils.destory();
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
+    public void onConfigurationChanged() {
         // 横竖屏切换
         gt3GeetestUtils.changeDialogLayout();
     }
